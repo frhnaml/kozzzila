@@ -84,9 +84,9 @@ class AuthenticationView extends GetView<AuthenticationController> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300],
                     padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10), // Adjust padding
+                        vertical: 10, horizontal: 10),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   child: const Text(
