@@ -15,7 +15,7 @@ class SplashScreenView extends GetView<SplashScreenController> {
       nextScreen: AuthenticationView(),
       duration: 1000,
       backgroundColor: Colors.lightBlue[200]!,
-      splashIconSize: 200,
+      splashIconSize: 400,
       );
   }
 }
