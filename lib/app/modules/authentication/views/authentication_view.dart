@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:kozzzila/app/modules/authentication/views/registrationView.dart';
+import 'package:kozzzila/app/routes/app_pages.dart';
 
 import '../controllers/authentication_controller.dart';
 
@@ -40,7 +41,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
               const SizedBox(height: 20),
               TextField(
                 decoration: InputDecoration(
-                  hintText: 'Username',
+                  hintText: 'email',
                   fillColor: Colors.grey[700],
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -65,7 +66,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
               const SizedBox(height: 10),
               GestureDetector(
                 onTap: () {
-                  Get.to(const Registrationview());
+                  Get.to(Registrationview());
                 },
                 child: const Text(
                   'register',
@@ -80,7 +81,9 @@ class AuthenticationView extends GetView<AuthenticationController> {
               SizedBox(
                 width: 100, // Set a custom width
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.toNamed(Routes.KEUANGAN); //home menu
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300],
                     padding: const EdgeInsets.symmetric(
@@ -97,7 +100,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
               ),
               const SizedBox(height: 60),
               const Text(
-                'more login methods',
+                'More login methods',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey),
               ),

@@ -3,7 +3,12 @@ import 'package:get/get.dart';
 import '../controllers/authentication_controller.dart';
 
 class Registrationview extends StatelessWidget {
-  const Registrationview({super.key});
+  Registrationview({super.key});
+
+  final AuthenticationController _authenticationController =
+      Get.find<AuthenticationController>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +33,9 @@ class Registrationview extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
-                hintText: 'Nama',
+                hintText: 'email',
                 fillColor: Colors.grey[700],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -40,18 +46,7 @@ class Registrationview extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             TextField(
-              decoration: InputDecoration(
-                hintText: 'Username',
-                fillColor: Colors.grey[700],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
+              controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 hintText: 'password',
@@ -64,10 +59,16 @@ class Registrationview extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-              SizedBox(
+            Obx(() {
+              return SizedBox(
                 width: 100, // Set a custom width
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _authenticationController.isLoading.value
+                      ? null
+                      : () {
+                          _authenticationController.registerUser(
+                              _emailController.text, _passwordController.text);
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300],
                     padding: const EdgeInsets.symmetric(
@@ -76,12 +77,15 @@ class Registrationview extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  child: _authenticationController.isLoading.value
+                      ? const CircularProgressIndicator()
+                      : const Text(
+                          'Register',
+                          style: TextStyle(color: Colors.grey),
+                        ),
                 ),
-              ),
+              );
+            }),
           ],
         ),
       ),
