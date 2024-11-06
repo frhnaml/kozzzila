@@ -12,7 +12,7 @@ class SplashScreenView extends GetView<SplashScreenController> {
   Widget build(BuildContext context) {
     return AnimatedSplashScreen(
       splash: Image.asset('assets/image/Home.png'), 
-      nextScreen: const AuthenticationView(),
+      nextScreen: AuthenticationView(),
       duration: 1000,
       backgroundColor: Colors.lightBlue[200]!,);
   }
