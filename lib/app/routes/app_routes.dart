@@ -7,6 +7,7 @@ abstract class Routes {
   static const AUTHENTICATION = _Paths.AUTHENTICATION;
   static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
   static const FEEDBACK = _Paths.FEEDBACK;
+  static const KEUANGAN = _Paths.KEUANGAN;
 }
 
 abstract class _Paths {
@@ -15,4 +16,5 @@ abstract class _Paths {
   static const AUTHENTICATION = '/authentication';
   static const SPLASH_SCREEN = '/splash-screen';
   static const FEEDBACK = '/feedback';
+  static const KEUANGAN = '/keuangan';
 }

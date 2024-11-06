@@ -6,6 +6,8 @@ import '../modules/feedback/bindings/feedback_binding.dart';
 import '../modules/feedback/views/feedback_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/keuangan/bindings/keuangan_binding.dart';
+import '../modules/keuangan/views/keuangan_view.dart';
 import '../modules/splashScreen/bindings/splash_screen_binding.dart';
 import '../modules/splashScreen/views/splash_screen_view.dart';
 
@@ -36,6 +38,11 @@ class AppPages {
       name: _Paths.FEEDBACK,
       page: () => const FeedbackView(),
       binding: FeedbackBinding(),
+    ),
+    GetPage(
+      name: _Paths.KEUANGAN,
+      page: () => const KeuanganView(),
+      binding: KeuanganBinding(),
     ),
   ];
 }
