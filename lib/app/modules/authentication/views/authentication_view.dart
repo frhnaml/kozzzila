@@ -40,6 +40,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
               ),
               const SizedBox(height: 20),
               TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   hintText: 'email',
                   fillColor: Colors.grey[700],
@@ -52,6 +53,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
               ),
               const SizedBox(height: 20),
               TextField(
+                controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'password',
@@ -78,12 +80,21 @@ class AuthenticationView extends GetView<AuthenticationController> {
                 ),
               ),
               const SizedBox(height: 20),
-              SizedBox(
-                width: 100, // Set a custom width
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed(Routes.KEUANGAN); //home menu
-                  },
+              Obx(() {
+                return ElevatedButton(
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : () {
+                          if (_emailController.text.isEmpty ||
+                              _passwordController.text.isEmpty) {
+                            Get.snackbar(
+                                'Error', 'Pastikan email dan password benar',
+                                backgroundColor: Colors.red);
+                          } else {
+                            controller.loginUser(_emailController.text,
+                                _passwordController.text);
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300],
                     padding: const EdgeInsets.symmetric(
@@ -96,8 +107,8 @@ class AuthenticationView extends GetView<AuthenticationController> {
                     'Login',
                     style: TextStyle(color: Colors.grey),
                   ),
-                ),
-              ),
+                );
+              }),
               const SizedBox(height: 60),
               const Text(
                 'More login methods',
@@ -107,18 +118,42 @@ class AuthenticationView extends GetView<AuthenticationController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.email_outlined),
-                  ),
+                  Obx(() {
+                    return IconButton(
+                      onPressed: controller.isLoading.value ? null : () {},
+                      icon: const Icon(Icons.email_outlined),
+                    );
+                  }),
                   const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      'assets/image/googleIcon.svg',
-                      height: 24,
-                    ),
-                  ),
+                  Obx(() {
+                    return IconButton(
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () async {
+                              if (!controller.isLoading.value) {
+                                controller.isLoading.value = true;
+                                var userCredential =
+                                    await controller.signInWithGoogle();
+
+                                if (userCredential != null) {
+                                  Get.snackbar('Sukses',
+                                      'Login menggunakan google sukses',
+                                      backgroundColor: Colors.green);
+                                  Get.toNamed(Routes.KEUANGAN);
+                                } else {
+                                  Get.snackbar(
+                                      'Gagal', 'Login menggunakan google gagal',
+                                      backgroundColor: Colors.red);
+                                }
+                                controller.isLoading.value = false;
+                              }
+                            },
+                      icon: SvgPicture.asset(
+                        'assets/image/googleIcon.svg',
+                        height: 24,
+                      ),
+                    );
+                  }),
                 ],
               ),
             ],
