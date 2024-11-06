@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:kozzzila/app/modules/authentication/views/registrationView.dart';
 
 import '../controllers/authentication_controller.dart';
 
@@ -32,7 +33,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
               Image.asset('assets/image/Home.png', height: 100),
               const SizedBox(height: 40),
               const Text(
-                'Login',
+                'Account login',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 textAlign: TextAlign.center,
               ),
@@ -61,6 +62,20 @@ class AuthenticationView extends GetView<AuthenticationController> {
                       const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                 ),
               ),
+              const SizedBox(height: 10),
+              GestureDetector(
+                onTap: () {
+                  Get.to(const Registrationview());
+                },
+                child: const Text(
+                  'register',
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: Colors.grey,
+                      fontSize: 12),
+                  textAlign: TextAlign.end,
+                ),
+              ),
               const SizedBox(height: 20),
               SizedBox(
                 width: 100, // Set a custom width
@@ -75,7 +90,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
                     ),
                   ),
                   child: const Text(
-                    'Register',
+                    'Login',
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
