@@ -14,6 +14,8 @@ class SplashScreenView extends GetView<SplashScreenController> {
       splash: Image.asset('assets/image/Home.png'), 
       nextScreen: AuthenticationView(),
       duration: 1000,
-      backgroundColor: Colors.lightBlue[200]!,);
+      backgroundColor: Colors.lightBlue[200]!,
+      splashIconSize: 200,
+      );
   }
 }
