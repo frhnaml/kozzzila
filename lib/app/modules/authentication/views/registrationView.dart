@@ -14,7 +14,7 @@ class Registrationview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('test'),
+        title: const Text('test'),
         backgroundColor: Colors.white,
       ),
       backgroundColor: Colors.white,

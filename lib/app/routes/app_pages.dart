@@ -41,7 +41,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.KEUANGAN,
-      page: () => const KeuanganView(),
+      page: () =>  KeuanganView(),
       binding: KeuanganBinding(),
     ),
   ];
