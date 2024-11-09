@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:kozzzila/app/modules/kamar/bindings/kamar_binding.dart';
+import 'package:kozzzila/app/modules/kamar/views/kamar_view.dart';
 
 import '../modules/authentication/bindings/authentication_binding.dart';
 import '../modules/authentication/views/authentication_view.dart';
@@ -16,7 +18,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SPLASH_SCREEN;
+  static const INITIAL = Routes.KAMAR;
 
   static final routes = [
     GetPage(
@@ -43,6 +45,11 @@ class AppPages {
       name: _Paths.KEUANGAN,
       page: () =>  KeuanganView(),
       binding: KeuanganBinding(),
+    ),
+    GetPage(
+      name: _Paths.KAMAR,
+      page: () =>  KamarView(),
+      binding: KamarBinding(),
     ),
   ];
 }

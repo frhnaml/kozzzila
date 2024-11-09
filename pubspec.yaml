@@ -45,6 +45,11 @@ dependencies:
   cloud_firestore: ^5.4.4
   google_sign_in: ^6.2.2
   intl_utils: ^2.8.7
+  date_format: ^2.0.9
+  image_picker: ^1.1.2
+  shared_preferences: ^2.3.3
+  get_storage: ^2.1.1
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
@@ -73,7 +78,7 @@ flutter:
       - assets/image/Home.png
       - assets/image/googleIcon.svg
       # for api key
-      - .env
+      # - .env
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
