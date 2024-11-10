@@ -73,7 +73,7 @@ flutter:
       - assets/image/Home.png
       - assets/image/googleIcon.svg
       # for api key
-      - .env
+      # - .env
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

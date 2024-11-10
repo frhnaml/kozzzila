@@ -13,8 +13,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-
-  Get.put(AuthenticationController());
+  // Get.put(AuthenticationController());
 
   runApp(
     GetMaterialApp(
