@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:kozzzila/app/modules/authentication/controllers/authentication_controller.dart';
+import 'package:kozzzila/app/modules/keuangan/controllers/keuangan_controller.dart';
 import 'package:kozzzila/firebase_options.dart';
 
 import 'app/routes/app_pages.dart';
@@ -13,8 +14,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-
+  //put controller globally
   Get.put(AuthenticationController());
+  Get.put(KeuanganController());
 
   runApp(
     GetMaterialApp(
