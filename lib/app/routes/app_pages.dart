@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:get/get.dart';
+import 'package:kozzzila/app/modules/komplain/views/komplain_view.dart';
+import 'package:kozzzila/app/modules/navbar/views/navbar_view.dart';
 
 import '../modules/authentication/bindings/authentication_binding.dart';
 import '../modules/authentication/views/authentication_view.dart';
@@ -18,12 +20,12 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SPLASH_SCREEN;
+  static const INITIAL = Routes.HOME;
 
   static final routes = [
     GetPage(
       name: _Paths.HOME,
-      page: () => const HomeView(),
+      page: () => NavbarView(),
       binding: HomeBinding(),
     ),
     GetPage(
@@ -43,8 +45,13 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.KEUANGAN,
-      page: () =>  KeuanganView(),
+      page: () => KeuanganView(),
       binding: KeuanganBinding(),
+    ),
+    GetPage(
+      name: _Paths.KOMPLAIN,
+      page: () => KomplainView(),
+      // binding: KeuanganBinding(),
     ),
   ];
 }

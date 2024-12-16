@@ -8,6 +8,7 @@ abstract class Routes {
   static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
   static const FEEDBACK = _Paths.FEEDBACK;
   static const KEUANGAN = _Paths.KEUANGAN;
+  static const KOMPLAIN = _Paths.KOMPLAIN;
 }
 
 abstract class _Paths {
@@ -17,4 +18,5 @@ abstract class _Paths {
   static const SPLASH_SCREEN = '/splash-screen';
   static const FEEDBACK = '/feedback';
   static const KEUANGAN = '/keuangan';
+  static const KOMPLAIN = '/komplain';
 }
