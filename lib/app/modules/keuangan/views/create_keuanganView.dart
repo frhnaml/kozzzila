@@ -1,178 +1,167 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/keuangan_controller.dart';
+import 'package:kozzzila/app/modules/keuangan/controllers/keuangan_controller.dart';
+import 'package:flutter/services.dart'; // Import this for input formatters
 
 class CreateKeuanganview extends StatelessWidget {
-  final bool isEdit;
-  final String? documentId;
-  final String? tanggal;
-  final String? kosan;
-  final String? kategori;
-  final String? keterangan;
-  final String? jumlahPengeluaran;
-
-  CreateKeuanganview({
-    super.key,
-    required this.isEdit,
-    this.documentId = '',
-    this.tanggal = '',
-    this.kosan = '',
-    this.kategori = '',
-    this.keterangan = '',
-    this.jumlahPengeluaran = '',
-  });
-
-  final KeuanganController controller = Get.put(KeuanganController());
+  CreateKeuanganview({super.key, this.docId, this.existingData});
+  final KeuanganController keuanganController = Get.find<KeuanganController>();
+  final String? docId; // for the document ID
+  final Map<String, dynamic>? existingData;
 
   @override
   Widget build(BuildContext context) {
-    controller.initForm(
-      isEdit: isEdit,
-      tanggal: tanggal,
-      kosan: kosan,
-      kategori: kategori,
-      keterangan: keterangan,
-      jumlahPengeluaran: jumlahPengeluaran,
-    );
+    if (existingData != null) {
+      keuanganController.tanggalController.text = existingData!['tanggal'];
+      keuanganController.kosanController.text = existingData!['kosan'];
+      keuanganController.selectedCategory.value = existingData!['kategori'];
+      keuanganController.keteranganController.text =
+          existingData!['keterangan'];
+      keuanganController.pengeluaranController.text =
+          existingData!['pengeluaran'];
+    }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEdit ? 'Edit Keuangan' : 'Create New Keuangan'),
-        backgroundColor: Colors.blue[200], // You can adjust the color as needed
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
-        ),
-      ),
       backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: Stack(
-          children: <Widget>[
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    _buildWidgetFormPrimary(context),
-                    const SizedBox(height: 16.0),
-                    _buildWidgetFormSecondary(context),
-                    const SizedBox(height: 16.0),
-                    Obx(() => controller.isLoading.value
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : _buildWidgetButtonCreateTask()),
-                  ],
+      appBar: AppBar(
+        title: Text(
+          existingData == null ? 'Tambah Pengeluaran' : 'Edit Pengeluaran',
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.lightBlue[200],
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ListView(
+            children: [
+              const SizedBox(height: 15),
+              const Text('Tanggal'),
+              const SizedBox(height: 7),
+              TextField(
+                controller: keuanganController.tanggalController,
+                readOnly: true,
+                decoration: InputDecoration(
+                    hintText: '01-11-2111',
+                    fillColor: Colors.grey[500],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 20),
+                    suffixIcon: IconButton(
+                        onPressed: () => keuanganController.selectDate(context),
+                        icon: const Icon(Icons.calendar_today_rounded))),
+              ),
+              const SizedBox(height: 15),
+              const Text('Kosan'),
+              const SizedBox(height: 7),
+              TextField(
+                controller: keuanganController.kosanController,
+                decoration: InputDecoration(
+                  hintText: 'Kosan 1',
+                  fillColor: Colors.grey[500],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWidgetFormPrimary(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const SizedBox(height: 16.0),
-          TextField(
-            controller: controller.controllertanggal,
-            decoration: InputDecoration(
-                labelText: 'Date',
-                hintText: '01-11-2111',
-                suffixIcon: const Icon(Icons.event),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            style: const TextStyle(fontSize: 18.0),
-            readOnly: true,
-            onTap: () => controller.selecDate(context),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWidgetFormSecondary(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24.0),
-          topRight: Radius.circular(24.0),
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
-        children: <Widget>[
-          TextField(
-            controller: controller.controllerkosan,
-            decoration: InputDecoration(
-                labelText: 'Kosan',
-                suffixIcon: const Icon(Icons.description),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            style: const TextStyle(fontSize: 18.0),
-          ),
-          const SizedBox(height: 16.0),
-          TextField(
-            controller: controller.controllerkategori,
-            decoration: InputDecoration(
-                labelText: 'Kategori',
-                suffixIcon: const Icon(Icons.category),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            style: const TextStyle(fontSize: 18.0),
-          ),
-          const SizedBox(height: 16.0),
-          TextField(
-            controller: controller.controllerketerangan,
-            decoration: InputDecoration(
-                labelText: 'Keterangan',
-                suffixIcon: const Icon(Icons.description_rounded),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            style: const TextStyle(fontSize: 18.0),
-          ),
-          const SizedBox(height: 16.0),
-          TextField(
-            controller: controller.controllerjumlahPengeluaran,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-                labelText: 'Jumlah pengeluaran',
-                suffixIcon: const Icon(Icons.money_rounded),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            style: const TextStyle(fontSize: 18.0),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWidgetButtonCreateTask() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[200],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: 15),
+              const Text('Kategori'),
+              const SizedBox(height: 7),
+              Obx(() {
+                return DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    hintText: '-- Pilih Kategori --',
+                    fillColor: Colors.grey[500],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 20),
+                  ),
+                  value: keuanganController.selectedCategory.value,
+                  items: keuanganController.categories
+                      .map((category) => DropdownMenuItem<String>(
+                            value: category,
+                            child: Text(category),
+                          ))
+                      .toList(),
+                  onChanged: (value) {
+                    keuanganController.updateCategory(value);
+                  },
+                );
+              }),
+              const SizedBox(height: 15),
+              const Text('Keterangan'),
+              const SizedBox(height: 7),
+              TextField(
+                controller: keuanganController.keteranganController,
+                decoration: InputDecoration(
+                  hintText: 'Deskripsi pengeluaran',
+                  fillColor: Colors.grey[500],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 45, horizontal: 20),
+                ),
+              ),
+              const SizedBox(height: 15),
+              const Text('Pengeluaran'),
+              const SizedBox(height: 7),
+              TextField(
+                controller: keuanganController.pengeluaranController,
+                keyboardType: TextInputType.numberWithOptions(
+                    decimal: true), // Allows decimal input
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(
+                      r'^\d*\.?\d{0,2}')) // Restrict to numbers or decimals with up to 2 decimal places
+                ],
+                decoration: InputDecoration(
+                  hintText: 'Jumlah pengeluaran',
+                  fillColor: Colors.grey[500],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                ),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  if (docId != null) {
+                    // If docId is not null, update data
+                    keuanganController.updateKeuangan(docId!);
+                  } else {
+                    // If docId is null, add new data
+                    keuanganController.addKeuangan();
+                  }
+                },
+                icon: const Icon(
+                  Icons.save_as_sharp,
+                  color: Colors.black,
+                ),
+                label: const Text(
+                  'Simpan',
+                  style: TextStyle(color: Colors.black),
+                ),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[400],
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 10),
+                    elevation: 5),
+              )
+            ],
           ),
         ),
-        child: Text(
-          isEdit ? 'UPDATE TASK' : 'Simpan',
-          style: TextStyle(
-            color: Colors.grey[100],
-          ),
-        ),
-        onPressed: () => controller.saveTask(isEdit, documentId),
       ),
     );
   }

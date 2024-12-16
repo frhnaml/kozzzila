@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:get/get.dart';
 import 'package:kozzzila/app/modules/komplain/views/komplain_view.dart';
 import 'package:kozzzila/app/modules/navbar/views/navbar_view.dart';
