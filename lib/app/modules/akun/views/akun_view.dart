@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:kozzzila/app/modules/authentication/controllers/authentication_controller.dart';
 
 class AkunView extends StatelessWidget {
+  final AuthenticationController _authController =
+      Get.find<AuthenticationController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +69,7 @@ class AkunView extends StatelessWidget {
                 style: TextStyle(color: Colors.red),
               ),
               onTap: () {
-                // Tambahkan logika untuk logout
+                _authController.logout();
               },
             ),
           ],
