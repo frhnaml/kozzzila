@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:kozzzila/app/modules/navbar/views/navbar_client_views.dart';
 import 'package:kozzzila/app/routes/app_pages.dart';
 
 class AuthenticationController extends GetxController {
@@ -34,7 +35,7 @@ class AuthenticationController extends GetxController {
       isLoading.value = true;
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       Get.snackbar('Sukses', 'Login sukses', backgroundColor: Colors.green);
-      Get.toNamed(Routes.KEUANGAN);
+      Get.to(const NavbarClientView());
     } catch (error) {
       Get.snackbar('Error', 'Login failed: $error',
           backgroundColor: Colors.red);

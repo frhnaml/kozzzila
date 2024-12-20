@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:kozzzila/app/modules/authentication/controllers/authentication_controller.dart';
 
 import '../controllers/navbar_controller.dart';
 
@@ -10,6 +11,7 @@ class NavbarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NavbarController controller = Get.put(NavbarController());
+    
 
     return Obx(() => Scaffold(
           body: controller.views[controller.selectedIndex.value],

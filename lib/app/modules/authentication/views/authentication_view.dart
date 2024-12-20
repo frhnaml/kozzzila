@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
 import 'package:kozzzila/app/modules/authentication/views/registrationView.dart';
+import 'package:kozzzila/app/modules/navbar/views/navbar_client_views.dart';
+import 'package:kozzzila/app/modules/navbar/views/navbar_view.dart';
 import 'package:kozzzila/app/routes/app_pages.dart';
 
 import '../controllers/authentication_controller.dart';
@@ -80,35 +82,44 @@ class AuthenticationView extends GetView<AuthenticationController> {
                 ),
               ),
               const SizedBox(height: 20),
-              Obx(() {
-                return ElevatedButton(
-                  onPressed: controller.isLoading.value
-                      ? null
-                      : () {
-                          if (_emailController.text.isEmpty ||
-                              _passwordController.text.isEmpty) {
-                            Get.snackbar(
-                                'Error', 'Pastikan email dan password benar',
-                                backgroundColor: Colors.red);
-                          } else {
-                            controller.loginUser(_emailController.text,
-                                _passwordController.text);
-                          }
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                );
-              }),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Obx(() {
+                    return ElevatedButton(
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () {
+                              if (_emailController.text.isEmpty ||
+                                  _passwordController.text.isEmpty) {
+                                Get.snackbar('Error',
+                                    'Pastikan email dan password benar',
+                                    backgroundColor: Colors.red);
+                              } else {
+                                controller.loginUser(_emailController.text,
+                                    _passwordController.text);
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    );
+                  }),
+                  SizedBox(width: 80),
+                  ElevatedButton(onPressed: (){
+                    Get.to(NavbarView());
+                  }, child: Text('admin'))
+                ],
+              ),
               const SizedBox(height: 60),
               const Text(
                 'More login methods',
@@ -139,7 +150,7 @@ class AuthenticationView extends GetView<AuthenticationController> {
                                   Get.snackbar('Sukses',
                                       'Login menggunakan google sukses',
                                       backgroundColor: Colors.green);
-                                  Get.toNamed(Routes.KEUANGAN);
+                                  Get.to(const NavbarClientView());
                                 } else {
                                   Get.snackbar(
                                       'Gagal', 'Login menggunakan google gagal',

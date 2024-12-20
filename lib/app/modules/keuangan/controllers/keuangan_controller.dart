@@ -66,22 +66,31 @@ class KeuanganController extends GetxController {
     }
   }
 
-  // CRUD: Update data
-  Future<void> updateKeuangan(String docId) async {
-    try {
-      await _firestore.collection('keuangan').doc(docId).update({
-        'tanggal': tanggalController.text,
-        'kosan': kosanController.text,
-        'kategori': selectedCategory.value,
-        'keterangan': keteranganController.text,
-        'pengeluaran': pengeluaranController.text,
-      });
-      Get.snackbar('Success', 'Data updated successfully!');
-      Get.toNamed(Routes.KEUANGAN);
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to update data: $e');
-    }
+// CRUD: Update data
+Future<void> updateKeuangan(String docId) async {
+  try {
+    await _firestore.collection('keuangan').doc(docId).update({
+      'tanggal': tanggalController.text,
+      'kosan': kosanController.text,
+      'kategori': selectedCategory.value,
+      'keterangan': keteranganController.text,
+      'pengeluaran': pengeluaranController.text,
+    });
+    // Clear fields after successful update
+    tanggalController.clear();
+    kosanController.clear();
+    keteranganController.clear();
+    pengeluaranController.clear();
+    selectedCategory.value = null;
+
+    Get.snackbar('Success', 'Data updated successfully!');
+    Get.toNamed(Routes.KEUANGAN); // Navigate back after update
+  } catch (e) {
+    Get.snackbar('Error', 'Failed to update data: $e');
   }
+}
+
+
 
   // CRUD: Delete data
   Future<void> deleteKeuangan(String docId) async {

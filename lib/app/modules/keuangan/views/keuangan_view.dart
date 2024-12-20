@@ -145,11 +145,7 @@ class KeuanganView extends GetView<KeuanganController> {
                               ),
                               SlidableAction(
                                 onPressed: (context) {
-                                  // Implement Edit
-                                  Get.to(CreateKeuanganview(
-                                    docId: item['id'],
-                                    existingData: item,
-                                  ));
+                                  // Navigate to the Edit screen with existing data
                                 },
                                 backgroundColor: Colors.transparent,
                                 foregroundColor: Colors.black,

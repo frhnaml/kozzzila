@@ -141,7 +141,7 @@ class CreateKeuanganview extends StatelessWidget {
                     // If docId is not null, update data
                     keuanganController.updateKeuangan(docId!);
                   } else {
-                    // If docId is null, add new data
+                    // If docId is null, it's a new entry, add the data
                     keuanganController.addKeuangan();
                   }
                 },
@@ -149,10 +149,9 @@ class CreateKeuanganview extends StatelessWidget {
                   Icons.save_as_sharp,
                   color: Colors.black,
                 ),
-                label: const Text(
-                  'Simpan',
-                  style: TextStyle(color: Colors.black),
-                ),
+                label: Text(docId != null
+                    ? 'Update Pengeluaran'
+                    : 'Tambah Pengeluaran'),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[400],
                     padding: const EdgeInsets.symmetric(
