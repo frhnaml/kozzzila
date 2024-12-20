@@ -73,6 +73,10 @@ flutter:
   assets:
       - assets/image/Home.png
       - assets/image/googleIcon.svg
+      - assets/image/kosan.png
+      - assets/image/paket.png
+      - assets/image/kunci_motor.png
+      - assets/image/kunci_kos.png
       # for api key
       # - .env
   #   - images/a_dot_burr.jpeg

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-import '../controllers/navbar_controller.dart';
+import '../controllers/navbar_client_controller.dart';
 
-class NavbarView extends StatelessWidget {
-  const NavbarView({Key? key}) : super(key: key);
+class NavbarClientView extends StatelessWidget {
+  const NavbarClientView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final NavbarController controller = Get.put(NavbarController());
+    final NavbarClientController controller = Get.put(NavbarClientController());
 
     return Obx(() => Scaffold(
           body: controller.views[controller.selectedIndex.value],

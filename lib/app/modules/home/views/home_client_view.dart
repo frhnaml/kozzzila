@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class HomeView extends StatelessWidget {
+class HomeClientView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Home Kosan"),
+        title: Text("Home"),
         backgroundColor: Colors.cyan,
       ),
       body: SingleChildScrollView(
@@ -106,13 +106,6 @@ class HomeView extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add your action here
-        },
-        backgroundColor: Colors.cyan,
-        child: Icon(Icons.add),
-      ),
     );
   }
 
@@ -150,14 +143,14 @@ class PaketPage extends StatelessWidget {
       "resi": "1232453",
       "penerima": "Hariz",
       "status": "Sudah Diambil",
-      "gambar": "assets/image/paket.png", // Ganti dengan path gambar Anda
+      "gambar": "assets/image/paket.png", // Replace with your image asset
     },
     {
       "nama": "Keyboard Razer XXX",
       "resi": "3627450",
       "penerima": "Farhan",
       "status": "Belum Diambil",
-      "gambar": "assets/image/paket.png", // Ganti dengan path gambar Anda
+      "gambar": "assets/image/paket.png", // Replace with your image asset
     },
   ];
 
@@ -190,33 +183,9 @@ class PaketPage extends StatelessWidget {
                   Text("Status: ${paket["status"]}"),
                 ],
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      // Tambahkan logika edit di sini
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      // Tambahkan logika hapus di sini
-                    },
-                  ),
-                ],
-              ),
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Tambahkan logika tambah data baru di sini
-        },
-        backgroundColor: Colors.cyan,
-        child: Icon(Icons.add),
       ),
     );
   }
@@ -228,13 +197,13 @@ class BarangHilangPage extends StatelessWidget {
       "nama": "Kunci Motor",
       "pemilik": "Riyo",
       "status": "Sudah Diambil",
-      "gambar": "assets/image/kunci_motor.png", // Ganti dengan path gambar Anda
+      "gambar": "assets/image/kunci_motor.png", // Replace with your image asset
     },
     {
       "nama": "Kunci Kos",
       "pemilik": "Farhan",
       "status": "Belum Diambil",
-      "gambar": "assets/image/kunci_kos.png", // Ganti dengan path gambar Anda
+      "gambar": "assets/image/kunci_kos.png", // Replace with your image asset
     },
   ];
 
@@ -266,33 +235,9 @@ class BarangHilangPage extends StatelessWidget {
                   Text("Status: ${barang["status"]}"),
                 ],
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      // Tambahkan logika edit di sini
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      // Tambahkan logika hapus di sini
-                    },
-                  ),
-                ],
-              ),
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Tambahkan logika tambah data baru di sini
-        },
-        backgroundColor: Colors.cyan,
-        child: Icon(Icons.add),
       ),
     );
   }
