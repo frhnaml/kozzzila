@@ -1,5 +1,9 @@
 import 'package:get/get.dart';
+import 'package:kozzzila/app/modules/home/bindings/home_client_binding.dart';
+import 'package:kozzzila/app/modules/komplain/bindings/komplain_binding.dart';
 import 'package:kozzzila/app/modules/komplain/views/komplain_view.dart';
+import 'package:kozzzila/app/modules/navbar/bindings/navbar_binding.dart';
+import 'package:kozzzila/app/modules/navbar/views/navbar_client_views.dart';
 import 'package:kozzzila/app/modules/navbar/views/navbar_view.dart';
 
 import '../modules/authentication/bindings/authentication_binding.dart';
@@ -49,7 +53,17 @@ class AppPages {
     GetPage(
       name: _Paths.KOMPLAIN,
       page: () => KomplainView(),
-      // binding: KeuanganBinding(),
+      binding: KomplainBinding(),
     ),
+    GetPage(
+      name: _Paths.HOME_CLIENT,
+      page: () => NavbarClientView(),
+      binding: HomeClientBinding(),
+    ),
+    //   GetPage(
+    //   name: _Paths.KOSAN_CLIENT,
+    //   // page: () => ClientView(),
+    //   // binding: HomeClientBinding(),
+    // ),
   ];
 }

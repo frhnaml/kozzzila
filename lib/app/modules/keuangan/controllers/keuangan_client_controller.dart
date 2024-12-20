@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class HomeController extends GetxController {
+class KeuanganClientController extends GetxController {
   //TODO: Implement HomeController
 
   final count = 0.obs;
