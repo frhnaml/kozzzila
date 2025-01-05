@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:kozzzila/app/modules/home/controllers/home_controller.dart';
 
 class HomeView extends StatelessWidget {
   @override
@@ -144,22 +146,7 @@ class HomeView extends StatelessWidget {
 }
 
 class PaketPage extends StatelessWidget {
-  final List<Map<String, String>> paketList = [
-    {
-      "nama": "Boneka Ambalabu",
-      "resi": "1232453",
-      "penerima": "Hariz",
-      "status": "Sudah Diambil",
-      "gambar": "assets/image/paket.png", // Ganti dengan path gambar Anda
-    },
-    {
-      "nama": "Keyboard Razer XXX",
-      "resi": "3627450",
-      "penerima": "Farhan",
-      "status": "Belum Diambil",
-      "gambar": "assets/image/paket.png", // Ganti dengan path gambar Anda
-    },
-  ];
+  final HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -168,75 +155,134 @@ class PaketPage extends StatelessWidget {
         title: Text("Paket"),
         backgroundColor: Colors.cyan,
       ),
-      body: ListView.builder(
-        itemCount: paketList.length,
-        itemBuilder: (context, index) {
-          final paket = paketList[index];
-          return Card(
-            margin: EdgeInsets.all(8),
-            child: ListTile(
-              leading: Image.asset(
-                paket["gambar"]!,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
+      body: Obx(
+        () => ListView.builder(
+          itemCount: controller.paketList.length,
+          itemBuilder: (context, index) {
+            final paket = controller.paketList[index];
+            return Card(
+              margin: EdgeInsets.all(8),
+              child: ListTile(
+                leading: Image.asset(
+                  paket["gambar"]!,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+                title: Text(paket["nama"]!),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("No. Resi: ${paket["resi"]}"),
+                    Text("Penerima: ${paket["penerima"]}"),
+                    Text("Status: ${paket["status"]}"),
+                  ],
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        _showEditDialog(context, index, true);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        controller.deletePaket(index);
+                      },
+                    ),
+                  ],
+                ),
               ),
-              title: Text(paket["nama"]!),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("No. Resi: ${paket["resi"]}"),
-                  Text("Penerima: ${paket["penerima"]}"),
-                  Text("Status: ${paket["status"]}"),
-                ],
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      // Tambahkan logika edit di sini
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      // Tambahkan logika hapus di sini
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Tambahkan logika tambah data baru di sini
+          _showEditDialog(context, null, true);
         },
         backgroundColor: Colors.cyan,
         child: Icon(Icons.add),
       ),
     );
   }
+
+  void _showEditDialog(BuildContext context, int? index, bool isPaket) {
+    final isEditing = index != null;
+    final item = isEditing
+        ? controller.paketList[index!]
+        : {"nama": "", "resi": "", "penerima": "", "status": "", "gambar": ""};
+
+    final TextEditingController namaController =
+        TextEditingController(text: item["nama"]);
+    final TextEditingController resiController =
+        TextEditingController(text: item["resi"]);
+    final TextEditingController penerimaController =
+        TextEditingController(text: item["penerima"]);
+    final TextEditingController statusController =
+        TextEditingController(text: item["status"]);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(isEditing ? "Edit Paket" : "Tambah Paket"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: namaController,
+              decoration: InputDecoration(labelText: "Nama Paket"),
+            ),
+            TextField(
+              controller: resiController,
+              decoration: InputDecoration(labelText: "No. Resi"),
+            ),
+            TextField(
+              controller: penerimaController,
+              decoration: InputDecoration(labelText: "Penerima"),
+            ),
+            TextField(
+              controller: statusController,
+              decoration: InputDecoration(labelText: "Status"),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              final newPaket = {
+                "nama": namaController.text,
+                "resi": resiController.text,
+                "penerima": penerimaController.text,
+                "status": statusController.text,
+                "gambar": "assets/image/paket.png",
+              };
+
+              if (isEditing) {
+                controller.updatePaket(index!, newPaket);
+              } else {
+                controller.addPaket(newPaket);
+              }
+              Navigator.pop(context);
+            },
+            child: Text("Save"),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
+
 class BarangHilangPage extends StatelessWidget {
-  final List<Map<String, String>> barangList = [
-    {
-      "nama": "Kunci Motor",
-      "pemilik": "Riyo",
-      "status": "Sudah Diambil",
-      "gambar": "assets/image/kunci_motor.png", // Ganti dengan path gambar Anda
-    },
-    {
-      "nama": "Kunci Kos",
-      "pemilik": "Farhan",
-      "status": "Belum Diambil",
-      "gambar": "assets/image/kunci_kos.png", // Ganti dengan path gambar Anda
-    },
-  ];
+  final HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -245,54 +291,118 @@ class BarangHilangPage extends StatelessWidget {
         title: Text("Barang Hilang"),
         backgroundColor: Colors.cyan,
       ),
-      body: ListView.builder(
-        itemCount: barangList.length,
-        itemBuilder: (context, index) {
-          final barang = barangList[index];
-          return Card(
-            margin: EdgeInsets.all(8),
-            child: ListTile(
-              leading: Image.asset(
-                barang["gambar"]!,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
+      body: Obx(
+        () => ListView.builder(
+          itemCount: controller.barangList.length,
+          itemBuilder: (context, index) {
+            final barang = controller.barangList[index];
+            return Card(
+              margin: EdgeInsets.all(8),
+              child: ListTile(
+                leading: Image.asset(
+                  barang["gambar"]!,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+                title: Text(barang["nama"]!),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Pemilik: ${barang["pemilik"]}"),
+                    Text("Status: ${barang["status"]}"),
+                  ],
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        _showEditDialog(context, index, false);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        controller.deleteBarang(index);
+                      },
+                    ),
+                  ],
+                ),
               ),
-              title: Text(barang["nama"]!),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Pemilik: ${barang["pemilik"]}"),
-                  Text("Status: ${barang["status"]}"),
-                ],
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      // Tambahkan logika edit di sini
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      // Tambahkan logika hapus di sini
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Tambahkan logika tambah data baru di sini
+          _showEditDialog(context, null, false);
         },
         backgroundColor: Colors.cyan,
         child: Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showEditDialog(BuildContext context, int? index, bool isPaket) {
+    final isEditing = index != null;
+    final item = isEditing
+        ? controller.barangList[index!]
+        : {"nama": "", "pemilik": "", "status": "", "gambar": ""};
+
+    final TextEditingController namaController =
+        TextEditingController(text: item["nama"]);
+    final TextEditingController pemilikController =
+        TextEditingController(text: item["pemilik"]);
+    final TextEditingController statusController =
+        TextEditingController(text: item["status"]);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(isEditing ? "Edit Barang Hilang" : "Tambah Barang Hilang"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: namaController,
+              decoration: InputDecoration(labelText: "Nama Barang"),
+            ),
+            TextField(
+              controller: pemilikController,
+              decoration: InputDecoration(labelText: "Pemilik"),
+            ),
+            TextField(
+              controller: statusController,
+              decoration: InputDecoration(labelText: "Status"),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              final newBarang = {
+                "nama": namaController.text,
+                "pemilik": pemilikController.text,
+                "status": statusController.text,
+                "gambar": "assets/image/kunci_motor.png", // Default image or can be dynamic
+              };
+
+              if (isEditing) {
+                controller.updateBarang(index!, newBarang);
+              } else {
+                controller.addBarang(newBarang);
+              }
+              Navigator.pop(context);
+            },
+            child: Text("Save"),
+          ),
+        ],
       ),
     );
   }
