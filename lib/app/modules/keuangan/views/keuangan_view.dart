@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:kozzzila/app/modules/keuangan/controllers/keuangan_client_controller.dart';
 
 class KeuanganView extends StatelessWidget {
   const KeuanganView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Initialize the controller
+    final KeuanganClientController controller = Get.put(KeuanganClientController());
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Keuangan'),
@@ -102,15 +107,22 @@ class KeuanganView extends StatelessWidget {
           const SizedBox(height: 16),
           // List Transaksi
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              children: [
-                transaksiItem(context, "Listrik", "02 Nov 0022", -50000000),
-                transaksiItem(context, "Air PDAM", "01 Nov 0001", -50000000),
-                transaksiItem(context, "Listrik", "01 Nov 0022", -50000000),
-                transaksiItem(context, "Air PDAM", "01 Nov 0001", -50000000),
-              ],
-            ),
+            child: Obx(() {
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                itemCount: controller.transaksiList.length,
+                itemBuilder: (context, index) {
+                  var transaksi = controller.transaksiList[index];
+                  return transaksiItem(
+                      context,
+                      transaksi['nama'],
+                      transaksi['tanggal'],
+                      transaksi['jumlah'],
+                      controller,
+                      index);
+                },
+              );
+            }),
           ),
         ],
       ),
@@ -129,7 +141,8 @@ class KeuanganView extends StatelessWidget {
   }
 
   Widget transaksiItem(
-      BuildContext context, String nama, String tanggal, int jumlah) {
+      BuildContext context, String nama, String tanggal, int jumlah, 
+      KeuanganClientController controller, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -172,7 +185,7 @@ class KeuanganView extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
-                  // Implementasi Hapus
+                  controller.deleteTransaksi(index);
                 },
               ),
             ],
@@ -183,11 +196,18 @@ class KeuanganView extends StatelessWidget {
   }
 }
 
+
 class TambahPengeluaranView extends StatelessWidget {
   const TambahPengeluaranView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final KeuanganClientController controller = Get.find();
+
+    TextEditingController namaController = TextEditingController();
+    TextEditingController tanggalController = TextEditingController();
+    TextEditingController jumlahController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Tambah Pengeluaran"),
@@ -205,6 +225,7 @@ class TambahPengeluaranView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
+              controller: tanggalController,
               decoration: const InputDecoration(
                 labelText: "Tanggal",
                 hintText: "01-01-2022",
@@ -213,6 +234,7 @@ class TambahPengeluaranView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: namaController,
               decoration: const InputDecoration(
                 labelText: "Kosan",
                 hintText: "Kosan 1",
@@ -220,29 +242,8 @@ class TambahPengeluaranView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              items: const [
-                DropdownMenuItem(value: "Listrik", child: Text("Listrik")),
-                DropdownMenuItem(value: "Air PDAM", child: Text("Air PDAM")),
-              ],
-              onChanged: (value) {
-                // Pilihan kategori
-              },
-              decoration: const InputDecoration(
-                labelText: "Kategori",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
             TextField(
-              decoration: const InputDecoration(
-                labelText: "Keterangan",
-                hintText: "Keterangan tambahan",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
+              controller: jumlahController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: "Jumlah Pengeluaran",
@@ -254,7 +255,14 @@ class TambahPengeluaranView extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Implementasi Simpan
+                  Map<String, dynamic> transaksi = {
+                    'nama': namaController.text,
+                    'tanggal': tanggalController.text,
+                    'jumlah': int.parse(jumlahController.text),
+                  };
+
+                  controller.addTransaksi(transaksi);
+                  Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.lightBlue,
