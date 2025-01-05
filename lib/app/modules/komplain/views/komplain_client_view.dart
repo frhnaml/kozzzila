@@ -29,7 +29,6 @@ class _KomplainViewState extends State<KomplainClientView> {
   ];
 
   Map<String, dynamic>? selectedKomplain;
-  TextEditingController feedbackController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +52,6 @@ class _KomplainViewState extends State<KomplainClientView> {
           : _buildKomplainDetail(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Tambahkan logika tambah data baru di sini
           showDialog(
             context: context,
             builder: (context) {
@@ -81,24 +79,35 @@ class _KomplainViewState extends State<KomplainClientView> {
               children: [
                 Text('Tanggal: ${item['date']}'),
                 Text('Deskripsi: ${item['description']}'),
-                Text('Feedback: ${item['feedback'] ?? "-"}'),
+                if (item['feedback'] != null)
+                  Text('Feedback: ${item['feedback']}'),
               ],
             ),
-            trailing: Container(
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: _getStatusColor(item['status']),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                item['status'],
-                style: TextStyle(color: Colors.white),
-              ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(item['status']),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    item['status'],
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    _confirmDelete(index);
+                  },
+                ),
+              ],
             ),
             onTap: () {
               setState(() {
                 selectedKomplain = item;
-                feedbackController.text = item['feedback'] ?? '';
               });
             },
           ),
@@ -116,6 +125,27 @@ class _KomplainViewState extends State<KomplainClientView> {
           Text('Nama: ${selectedKomplain!['name']}'),
           Text('Tanggal: ${selectedKomplain!['date']}'),
           Text('Deskripsi: ${selectedKomplain!['description']}'),
+          if (selectedKomplain!['feedback'] != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Feedback:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(selectedKomplain!['feedback']),
+                  ),
+                ],
+              ),
+            ),
           SizedBox(height: 16),
           Text(
             'Status:',
@@ -133,15 +163,6 @@ class _KomplainViewState extends State<KomplainClientView> {
             ),
           ),
           SizedBox(height: 16),
-          TextField(
-            controller: feedbackController,
-            decoration: InputDecoration(
-              hintText: 'Tambahkan teks',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 4,
-          ),
-          SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -151,17 +172,7 @@ class _KomplainViewState extends State<KomplainClientView> {
                     selectedKomplain = null;
                   });
                 },
-                child: Text('Batal'),
-              ),
-              SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    selectedKomplain!['feedback'] = feedbackController.text;
-                    selectedKomplain = null;
-                  });
-                },
-                child: Text('Simpan'),
+                child: Text('Kembali'),
               ),
             ],
           ),
@@ -212,6 +223,35 @@ class _KomplainViewState extends State<KomplainClientView> {
           child: Text("Simpan"),
         ),
       ],
+    );
+  }
+
+  void _confirmDelete(int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Hapus Komplain"),
+          content: Text("Apakah Anda yakin ingin menghapus komplain ini?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  komplainData.removeAt(index);
+                });
+                Navigator.pop(context);
+              },
+              child: Text("Hapus"),
+            ),
+          ],
+        );
+      },
     );
   }
 
