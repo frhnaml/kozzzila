@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kozzzila/app/modules/akun/views/akun_client_view.dart';
 import 'package:kozzzila/app/modules/keuangan/views/keuangan_client_view.dart';
-import 'package:kozzzila/app/modules/komplain/views/komplai_client_view.dart';
+import 'package:kozzzila/app/modules/komplain/views/komplain_client_view.dart';
 import 'package:kozzzila/app/modules/kosan/views/kosan_client_view.dart';
 
 import '../../home/views/home_client_view.dart';
