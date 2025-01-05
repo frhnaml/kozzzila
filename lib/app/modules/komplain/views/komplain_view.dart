@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 
 class KomplainView extends StatefulWidget {
   @override
@@ -6,30 +7,23 @@ class KomplainView extends StatefulWidget {
 }
 
 class _KomplainViewState extends State<KomplainView> {
-  final List<Map<String, dynamic>> komplainData = [
-    {
-      "name": "Riyo",
-      "date": "12 Sep 2024",
-      "description": "Ada Kunci Motor Ketinggalan di Parkiran",
-      "status": "Tunda"
-    },
-    {
-      "name": "Hanif",
-      "date": "10 Sep 2024",
-      "description": "Sinyal wifi buruk",
-      "status": "Proses"
-    },
-    {
-      "name": "Mamat",
-      "date": "7 Sep 2024",
-      "description": "Kasur saya rusak mas",
-      "feedback": "Sudah saya perbaiki mas tadi jam 9 pagi tks",
-      "status": "Selesai"
-    },
-  ];
-
+  List<Map<String, dynamic>> komplainData = [];
   Map<String, dynamic>? selectedKomplain;
-  TextEditingController feedbackController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadKomplainData();
+  }
+
+  // Load data from GetStorage
+  _loadKomplainData() {
+    final box = GetStorage();
+    List<dynamic> storedData = box.read('komplainData') ?? [];
+    setState(() {
+      komplainData = storedData.map((e) => Map<String, dynamic>.from(e)).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,19 +45,6 @@ class _KomplainViewState extends State<KomplainView> {
       body: selectedKomplain == null
           ? _buildKomplainList()
           : _buildKomplainDetail(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Tambahkan logika tambah data baru di sini
-          showDialog(
-            context: context,
-            builder: (context) {
-              return _buildAddKomplainDialog();
-            },
-          );
-        },
-        backgroundColor: Colors.cyan,
-        child: Icon(Icons.add),
-      ),
     );
   }
 
@@ -98,7 +79,6 @@ class _KomplainViewState extends State<KomplainView> {
             onTap: () {
               setState(() {
                 selectedKomplain = item;
-                feedbackController.text = item['feedback'] ?? '';
               });
             },
           ),
@@ -133,13 +113,20 @@ class _KomplainViewState extends State<KomplainView> {
             ),
           ),
           SizedBox(height: 16),
-          TextField(
-            controller: feedbackController,
-            decoration: InputDecoration(
-              hintText: 'Tambahkan teks',
-              border: OutlineInputBorder(),
+          Text(
+            'Feedback:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(4),
             ),
-            maxLines: 4,
+            child: Text(
+              selectedKomplain!['feedback'] ?? '-',
+              style: TextStyle(color: Colors.black),
+            ),
           ),
           SizedBox(height: 16),
           Row(
@@ -151,67 +138,12 @@ class _KomplainViewState extends State<KomplainView> {
                     selectedKomplain = null;
                   });
                 },
-                child: Text('Batal'),
-              ),
-              SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    selectedKomplain!['feedback'] = feedbackController.text;
-                    selectedKomplain = null;
-                  });
-                },
-                child: Text('Simpan'),
+                child: Text('Kembali'),
               ),
             ],
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildAddKomplainDialog() {
-    TextEditingController nameController = TextEditingController();
-    TextEditingController descriptionController = TextEditingController();
-
-    return AlertDialog(
-      title: Text("Tambah Komplain"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: nameController,
-            decoration: InputDecoration(labelText: "Nama"),
-          ),
-          SizedBox(height: 8),
-          TextField(
-            controller: descriptionController,
-            decoration: InputDecoration(labelText: "Deskripsi"),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text("Batal"),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              komplainData.add({
-                "name": nameController.text,
-                "date": DateTime.now().toString().split(' ')[0],
-                "description": descriptionController.text,
-                "status": "Tunda"
-              });
-            });
-            Navigator.pop(context);
-          },
-          child: Text("Simpan"),
-        ),
-      ],
     );
   }
 

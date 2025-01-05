@@ -1,34 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:kozzzila/app/modules/komplain/controllers/komplain_controller.dart';
 
 class KomplainClientView extends StatefulWidget {
   @override
-  _KomplainViewState createState() => _KomplainViewState();
+  _KomplainClientViewState createState() => _KomplainClientViewState();
 }
 
-class _KomplainViewState extends State<KomplainClientView> {
-  final List<Map<String, dynamic>> komplainData = [
-    {
-      "name": "Riyo",
-      "date": "12 Sep 2024",
-      "description": "Ada Kunci Motor Ketinggalan di Parkiran",
-      "status": "Tunda"
-    },
-    {
-      "name": "Hanif",
-      "date": "10 Sep 2024",
-      "description": "Sinyal wifi buruk",
-      "status": "Proses"
-    },
-    {
-      "name": "Mamat",
-      "date": "7 Sep 2024",
-      "description": "Kasur saya rusak mas",
-      "feedback": "Sudah saya perbaiki mas tadi jam 9 pagi tks",
-      "status": "Selesai"
-    },
-  ];
-
-  Map<String, dynamic>? selectedKomplain;
+class _KomplainClientViewState extends State<KomplainClientView> {
+  final KomplainController komplainController = Get.put(KomplainController());
 
   @override
   Widget build(BuildContext context) {
@@ -36,26 +16,18 @@ class _KomplainViewState extends State<KomplainClientView> {
       appBar: AppBar(
         title: Text('Komplain'),
         backgroundColor: Colors.cyan,
-        leading: selectedKomplain != null
-            ? IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  setState(() {
-                    selectedKomplain = null;
-                  });
-                },
-              )
-            : null,
       ),
-      body: selectedKomplain == null
-          ? _buildKomplainList()
-          : _buildKomplainDetail(),
+      body: Obx(() {
+        return komplainController.komplainData.isEmpty
+            ? Center(child: Text("No complaints available"))
+            : _buildKomplainList();
+      }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
-            context: context,
+            context: context, // Now you can use context directly
             builder: (context) {
-              return _buildAddKomplainDialog();
+              return _buildAddKomplainDialog(context); // Pass context here
             },
           );
         },
@@ -67,9 +39,9 @@ class _KomplainViewState extends State<KomplainClientView> {
 
   Widget _buildKomplainList() {
     return ListView.builder(
-      itemCount: komplainData.length,
+      itemCount: komplainController.komplainData.length,
       itemBuilder: (context, index) {
-        final item = komplainData[index];
+        final item = komplainController.komplainData[index];
         return Card(
           margin: EdgeInsets.all(8),
           child: ListTile(
@@ -100,88 +72,18 @@ class _KomplainViewState extends State<KomplainClientView> {
                 IconButton(
                   icon: Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
-                    _confirmDelete(index);
+                    komplainController.deleteKomplain(index);
                   },
                 ),
               ],
             ),
-            onTap: () {
-              setState(() {
-                selectedKomplain = item;
-              });
-            },
           ),
         );
       },
     );
   }
 
-  Widget _buildKomplainDetail() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Nama: ${selectedKomplain!['name']}'),
-          Text('Tanggal: ${selectedKomplain!['date']}'),
-          Text('Deskripsi: ${selectedKomplain!['description']}'),
-          if (selectedKomplain!['feedback'] != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Feedback:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(selectedKomplain!['feedback']),
-                  ),
-                ],
-              ),
-            ),
-          SizedBox(height: 16),
-          Text(
-            'Status:',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: _getStatusColor(selectedKomplain!['status']),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              selectedKomplain!['status'],
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    selectedKomplain = null;
-                  });
-                },
-                child: Text('Kembali'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAddKomplainDialog() {
+  Widget _buildAddKomplainDialog(BuildContext context) {
     TextEditingController nameController = TextEditingController();
     TextEditingController descriptionController = TextEditingController();
 
@@ -210,48 +112,15 @@ class _KomplainViewState extends State<KomplainClientView> {
         ),
         ElevatedButton(
           onPressed: () {
-            setState(() {
-              komplainData.add({
-                "name": nameController.text,
-                "date": DateTime.now().toString().split(' ')[0],
-                "description": descriptionController.text,
-                "status": "Tunda"
-              });
-            });
+            komplainController.addKomplain(
+              nameController.text,
+              descriptionController.text,
+            );
             Navigator.pop(context);
           },
           child: Text("Simpan"),
         ),
       ],
-    );
-  }
-
-  void _confirmDelete(int index) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Hapus Komplain"),
-          content: Text("Apakah Anda yakin ingin menghapus komplain ini?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Batal"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  komplainData.removeAt(index);
-                });
-                Navigator.pop(context);
-              },
-              child: Text("Hapus"),
-            ),
-          ],
-        );
-      },
     );
   }
 
