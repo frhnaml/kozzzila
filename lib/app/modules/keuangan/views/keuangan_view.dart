@@ -112,14 +112,16 @@ class KeuanganView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 itemCount: controller.transaksiList.length,
                 itemBuilder: (context, index) {
-                  var transaksi = controller.transaksiList[index];
+                  Map<String, dynamic> transaksi = controller.transaksiList[index]; // Explicitly declare the type here
                   return transaksiItem(
                       context,
                       transaksi['nama'],
                       transaksi['tanggal'],
                       transaksi['jumlah'],
                       controller,
-                      index);
+                      index,
+                      transaksi // Pass the whole transaksi data
+                  );
                 },
               );
             }),
@@ -141,8 +143,8 @@ class KeuanganView extends StatelessWidget {
   }
 
   Widget transaksiItem(
-      BuildContext context, String nama, String tanggal, int jumlah, 
-      KeuanganClientController controller, int index) {
+      BuildContext context, String nama, String tanggal, int jumlah,
+      KeuanganClientController controller, int index, Map<String, dynamic> transaksi) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -174,11 +176,15 @@ class KeuanganView extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.edit, color: Colors.blue),
                 onPressed: () {
-                  // Implementasi Edit
+                  // Pass the current transaksi data for editing
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const TambahPengeluaranView()),
+                      builder: (context) => TambahPengeluaranView(
+                        transaksi: transaksi, // Pass the full transaksi data
+                        index: index, // Pass the index
+                      ),
+                    ),
                   );
                 },
               ),
@@ -198,19 +204,32 @@ class KeuanganView extends StatelessWidget {
 
 
 class TambahPengeluaranView extends StatelessWidget {
-  const TambahPengeluaranView({Key? key}) : super(key: key);
+  final Map<String, dynamic>? transaksi;
+  final int? index;
+
+  const TambahPengeluaranView({Key? key, this.transaksi, this.index})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final KeuanganClientController controller = Get.find();
 
     TextEditingController namaController = TextEditingController();
-    TextEditingController tanggalController = TextEditingController();
     TextEditingController jumlahController = TextEditingController();
+    DateTime? selectedDate = DateTime.now();
+    int? selectedKosan;
+
+    // If editing, populate fields with current data
+    if (transaksi != null) {
+      namaController.text = transaksi!['nama'];
+      jumlahController.text = transaksi!['jumlah'].toString();
+      selectedDate = DateTime.parse(transaksi!['tanggal']);
+      selectedKosan = int.parse(transaksi!['nama'].split(' ')[1]);
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tambah Pengeluaran"),
+        title: Text(transaksi == null ? "Tambah Pengeluaran" : "Edit Pengeluaran"),
         backgroundColor: Colors.lightBlue,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -224,24 +243,54 @@ class TambahPengeluaranView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: tanggalController,
-              decoration: const InputDecoration(
-                labelText: "Tanggal",
-                hintText: "01-01-2022",
-                border: OutlineInputBorder(),
+            // Date Picker for Tanggal
+            GestureDetector(
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: selectedDate!,
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2101),
+                );
+                if (pickedDate != null && pickedDate != selectedDate) {
+                  selectedDate = pickedDate;
+                }
+              },
+              child: AbsorbPointer(
+                child: TextField(
+                  controller: TextEditingController(
+                      text: "${selectedDate?.toLocal()}".split(' ')[0]),
+                  decoration: const InputDecoration(
+                    labelText: "Tanggal",
+                    hintText: "Pick a date",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: namaController,
+
+            // Dropdown for Kosan
+            DropdownButtonFormField<int>(
+              value: selectedKosan,
+              hint: const Text("Pilih Kosan"),
+              onChanged: (int? newValue) {
+                selectedKosan = newValue;
+              },
+              items: List.generate(5, (index) {
+                return DropdownMenuItem<int>(
+                  value: index + 1,
+                  child: Text("Kosan ${index + 1}"),
+                );
+              }),
               decoration: const InputDecoration(
                 labelText: "Kosan",
-                hintText: "Kosan 1",
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
+
+            // TextField for Jumlah Pengeluaran
             TextField(
               controller: jumlahController,
               keyboardType: TextInputType.number,
@@ -252,24 +301,36 @@ class TambahPengeluaranView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
+
+            // Save Button
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Map<String, dynamic> transaksi = {
-                    'nama': namaController.text,
-                    'tanggal': tanggalController.text,
-                    'jumlah': int.parse(jumlahController.text),
-                  };
+                  if (selectedKosan != null && selectedDate != null) {
+                    Map<String, dynamic> transaksiData = {
+                      'nama': "Kosan ${selectedKosan}",
+                      'tanggal': "${selectedDate?.toLocal()}".split(' ')[0],
+                      'jumlah': int.parse(jumlahController.text),
+                    };
 
-                  controller.addTransaksi(transaksi);
-                  Navigator.pop(context);
+                    if (transaksi == null) {
+                      // Add new transaksi if no data is passed
+                      controller.addTransaksi(transaksiData);
+                    } else {
+                      // Update existing transaksi if data is passed
+                      controller.updateTransaksi(index!, transaksiData);
+                    }
+                    Navigator.pop(context);
+                  } else {
+                    // You can add validation to show an error message
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.lightBlue,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
-                child: const Text("Simpan"),
+                child: Text(transaksi == null ? "Simpan" : "Update"),
               ),
             ),
           ],
