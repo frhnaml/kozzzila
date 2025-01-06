@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:kozzzila/app/modules/home/controllers/home_controller.dart';
 
 class HomeClientView extends StatelessWidget {
   @override
@@ -137,22 +139,7 @@ class HomeClientView extends StatelessWidget {
 }
 
 class PaketPage extends StatelessWidget {
-  final List<Map<String, String>> paketList = [
-    {
-      "nama": "Boneka Ambalabu",
-      "resi": "1232453",
-      "penerima": "Hariz",
-      "status": "Sudah Diambil",
-      "gambar": "assets/image/paket.png", // Replace with your image asset
-    },
-    {
-      "nama": "Keyboard Razer XXX",
-      "resi": "3627450",
-      "penerima": "Farhan",
-      "status": "Belum Diambil",
-      "gambar": "assets/image/paket.png", // Replace with your image asset
-    },
-  ];
+  final HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -161,51 +148,41 @@ class PaketPage extends StatelessWidget {
         title: Text("Paket"),
         backgroundColor: Colors.cyan,
       ),
-      body: ListView.builder(
-        itemCount: paketList.length,
-        itemBuilder: (context, index) {
-          final paket = paketList[index];
-          return Card(
-            margin: EdgeInsets.all(8),
-            child: ListTile(
-              leading: Image.asset(
-                paket["gambar"]!,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
+      body: Obx(
+        () => ListView.builder(
+          itemCount: controller.paketList.length,
+          itemBuilder: (context, index) {
+            final paket = controller.paketList[index];
+            return Card(
+              margin: EdgeInsets.all(8),
+              child: ListTile(
+                leading: Image.asset(
+                  paket["gambar"]!,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+                title: Text(paket["nama"]!),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("No. Resi: ${paket["resi"]}"),
+                    Text("Penerima: ${paket["penerima"]}"),
+                    Text("Status: ${paket["status"]}"),
+                  ],
+                ),
               ),
-              title: Text(paket["nama"]!),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("No. Resi: ${paket["resi"]}"),
-                  Text("Penerima: ${paket["penerima"]}"),
-                  Text("Status: ${paket["status"]}"),
-                ],
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 }
 
+
 class BarangHilangPage extends StatelessWidget {
-  final List<Map<String, String>> barangList = [
-    {
-      "nama": "Kunci Motor",
-      "pemilik": "Riyo",
-      "status": "Sudah Diambil",
-      "gambar": "assets/image/kunci_motor.png", // Replace with your image asset
-    },
-    {
-      "nama": "Kunci Kos",
-      "pemilik": "Farhan",
-      "status": "Belum Diambil",
-      "gambar": "assets/image/kunci_kos.png", // Replace with your image asset
-    },
-  ];
+  final HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -214,31 +191,34 @@ class BarangHilangPage extends StatelessWidget {
         title: Text("Barang Hilang"),
         backgroundColor: Colors.cyan,
       ),
-      body: ListView.builder(
-        itemCount: barangList.length,
-        itemBuilder: (context, index) {
-          final barang = barangList[index];
-          return Card(
-            margin: EdgeInsets.all(8),
-            child: ListTile(
-              leading: Image.asset(
-                barang["gambar"]!,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
+      body: Obx(
+        () => ListView.builder(
+          itemCount: controller.barangList.length,
+          itemBuilder: (context, index) {
+            final barang = controller.barangList[index];
+            return Card(
+              margin: EdgeInsets.all(8),
+              child: ListTile(
+                leading: Image.asset(
+                  barang["gambar"]!,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+                title: Text(barang["nama"]!),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Pemilik: ${barang["pemilik"]}"),
+                    Text("Status: ${barang["status"]}"),
+                  ],
+                ),
               ),
-              title: Text(barang["nama"]!),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Pemilik: ${barang["pemilik"]}"),
-                  Text("Status: ${barang["status"]}"),
-                ],
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 }
+

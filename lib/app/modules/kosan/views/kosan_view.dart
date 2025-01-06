@@ -79,6 +79,40 @@ class _KosanViewState extends State<KosanView> {
     );
   }
 
+  // Add new room
+  void addRoom() {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Tambah Nama Kamar"),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              labelText: "Nama Kamar Baru",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  rooms.add(controller.text);
+                });
+                Navigator.pop(context);
+              },
+              child: const Text("Tambah"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,9 +160,7 @@ class _KosanViewState extends State<KosanView> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.cyan,
         child: const Icon(Icons.add),
-        onPressed: () {
-          // Tambahkan logika untuk tambah kamar baru
-        },
+        onPressed: addRoom, // Call addRoom method when FAB is pressed
       ),
     );
   }

@@ -1,28 +1,55 @@
 import 'package:flutter/material.dart';
 
-class KeuanganClientView extends StatelessWidget {
-  final List<Map<String, String>> transactions = [
+class KeuanganClientView extends StatefulWidget {
+  @override
+  _KeuanganClientViewState createState() => _KeuanganClientViewState();
+}
+
+class _KeuanganClientViewState extends State<KeuanganClientView> {
+  // Daftar transaksi
+  List<Map<String, dynamic>> transactions = [
     {
-      "kategori": "Listrik",
-      "tanggal": "02 Nov 2022",
-      "jumlah": "-Rp. 50.000.000"
+      "title": "Listrik",
+      "date": "02 Nov 2022",
+      "amount": 50000000,
+      "isChecked": false
     },
     {
-      "kategori": "Air PDAM",
-      "tanggal": "01 Nov 0001",
-      "jumlah": "-Rp. 50.000.000"
+      "title": "Air PDAM",
+      "date": "01 Nov 2022",
+      "amount": 50000000,
+      "isChecked": false
     },
     {
-      "kategori": "Listrik",
-      "tanggal": "02 Nov 2022",
-      "jumlah": "-Rp. 50.000.000"
+      "title": "Listrik",
+      "date": "02 Nov 2022",
+      "amount": 50000000,
+      "isChecked": false
     },
     {
-      "kategori": "Air PDAM",
-      "tanggal": "01 Nov 0001",
-      "jumlah": "-Rp. 50.000.000"
+      "title": "Air PDAM",
+      "date": "01 Nov 2022",
+      "amount": 50000000,
+      "isChecked": false
     },
   ];
+
+  // Menghitung total transaksi yang dicentang
+  int getTotalCheckedAmount() {
+    return transactions
+        .where((transaction) => transaction["isChecked"] == true)
+        .fold<int>(0, (sum, item) => sum + (item["amount"] as int));
+  }
+
+  // Menghapus transaksi yang dicentang
+  void paySelectedTransactions() {
+    setState(() {
+      transactions.removeWhere((transaction) => transaction["isChecked"]);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Transaksi berhasil dibayar!")),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,89 +59,71 @@ class KeuanganClientView extends StatelessWidget {
         backgroundColor: Colors.cyan,
         actions: [
           IconButton(
-            onPressed: () {
-              // Tambahkan logika untuk download laporan
-            },
             icon: Icon(Icons.download),
-          ),
+            onPressed: () {
+              // Implementasi untuk download data jika diperlukan
+            },
+          )
         ],
       ),
       body: Column(
         children: [
-          // Filter Button
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Tambahkan logika untuk filter
-                  },
-                  icon: Icon(Icons.filter_alt),
-                  label: Text("30 Hari terakhir"),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.grey.shade200,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Transaction List
+          // Daftar transaksi
           Expanded(
             child: ListView.builder(
               itemCount: transactions.length,
               itemBuilder: (context, index) {
                 final transaction = transactions[index];
                 return Card(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ListTile(
-                    leading: Icon(
-                      Icons.receipt_long,
-                      color: Colors.cyan,
+                    leading: Checkbox(
+                      value: transaction["isChecked"],
+                      onChanged: (value) {
+                        setState(() {
+                          transaction["isChecked"] = value!;
+                        });
+                      },
                     ),
-                    title: Text(
-                      transaction["kategori"]!,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(transaction["tanggal"]!),
+                    title: Text(transaction["title"]),
+                    subtitle: Text(transaction["date"]),
                     trailing: Text(
-                      transaction["jumlah"]!,
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      "-Rp. ${transaction["amount"].toString()}",
+                      style: TextStyle(color: Colors.red),
                     ),
                   ),
                 );
               },
             ),
           ),
-
-          // Pay Button
+          // Total jumlah yang dicentang
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Tambahkan logika untuk pembayaran
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.cyan,
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Total: Rp. ${getTotalCheckedAmount()}",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (transactions
+                        .any((transaction) => transaction["isChecked"])) {
+                      paySelectedTransactions();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text("Pilih transaksi terlebih dahulu!")),
+                      );
+                    }
+                  },
+                  child: Text("Bayar"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.cyan,
                   ),
                 ),
-                child: Text(
-                  "Bayar",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ),
+              ],
             ),
           ),
         ],
